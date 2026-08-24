@@ -7,7 +7,7 @@
 **Apprendre à lire, dire et reconnaître les nombres en anglais.**
 Une petite application maison, gratuite, sans publicité et sans compte.
 
-[![Ouvrir l'application](https://img.shields.io/badge/%E2%96%B6%20Ouvrir%20l'application-0A2A66?style=for-the-badge)](https://caribounathan.github.io/english-numbers/)
+[![Ouvrir l'application]([https://img.shields.io/badge/%E2%96%B6%20Ouvrir%20l'application-0A2A66?style=for-the-badge)](https://caribounathan.github.io/english-numbers/](https://caribounathan.github.io/EnglishNumbersQuiz/))
 
 </div>
 
