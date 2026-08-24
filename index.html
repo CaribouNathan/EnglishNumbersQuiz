@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="English Numbers">
+<meta name="description" content="Apprends les nombres en anglais. Caribou Labs.">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" media="(prefers-color-scheme: dark)" href="icons/apple-touch-icon-dark.png">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<title>English Numbers</title>
+<style>
+:root{
+  --bg:#F2F2F7; --card:#FFFFFF; --fill:rgba(120,120,128,.2);
+  --sep:rgba(60,60,67,.29); --text:#000; --text2:rgba(60,60,67,.6);
+  --blue:#007AFF; --green:#34C759; --orange:#FF9500; --red:#FF3B30;
+  --gray:#8E8E93; --tint:rgba(0,122,255,.1);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#000; --card:#1C1C1E; --fill:rgba(120,120,128,.32);
+    --sep:rgba(84,84,88,.65); --text:#FFF; --text2:rgba(235,235,245,.6);
+    --blue:#0A84FF; --green:#30D158; --orange:#FF9F0A; --red:#FF453A;
+    --tint:rgba(10,132,255,.18); }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:17px;line-height:1.3;-webkit-user-select:none;user-select:none;overflow-x:hidden;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+#app{max-width:560px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.screen{flex:1;display:flex;flex-direction:column;animation:fade .25s ease-in-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.spacer{flex:1;min-height:16px}
+.rounded{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif;
+  font-variant-numeric:tabular-nums}
+
+/* Nav bar */
+.navbar{display:flex;align-items:center;padding:12px 16px;background:var(--card);
+  border-bottom:.5px solid var(--sep);position:relative}
+.navbar .title{position:absolute;left:0;right:0;text-align:center;font-size:17px;font-weight:600;pointer-events:none}
+.navbar .back{display:flex;align-items:center;gap:4px;color:var(--blue);font-size:17px;z-index:1}
+.navbar .back svg{width:15px;height:15px}
+
+/* Accueil */
+.home{align-items:center;padding:0 24px;text-align:center;gap:24px}
+.flag{font-size:80px;line-height:1}
+.home h1{font-size:34px;font-weight:700;margin:0;letter-spacing:-.5px}
+.home .tag{font-size:20px;color:var(--text2)}
+.segmented{display:flex;width:100%;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
+.segmented button{flex:1;padding:7px 4px;font-size:13px;font-weight:500;border-radius:7px;
+  transition:background .2s,box-shadow .2s;white-space:nowrap}
+.segmented button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.level{width:100%;display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;
+  color:#fff;text-align:left;transition:transform .12s}
+.level:active{transform:scale(.98)}
+.level.beginner{background:linear-gradient(160deg,#3ad35f,#28a745)}
+.level.brave{background:linear-gradient(160deg,#ffab1a,#f08300)}
+.level b{display:block;font-size:22px;font-weight:700}
+.level span{font-size:15px;opacity:.95}
+.level .fill{flex:1}
+.level .chev{font-size:20px;font-weight:600}
+.credit{font-size:11px;color:var(--text2);padding-bottom:8px}
+
+/* Réglages (style Form iOS) */
+.form{padding:16px 20px 30px}
+.form-section{margin-bottom:22px}
+.form-label{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;
+  padding:0 4px 7px}
+.form-card{background:var(--card);border-radius:10px;overflow:hidden}
+.form-row{display:flex;align-items:center;gap:12px;padding:11px 16px;min-height:44px}
+.form-row + .form-row{border-top:.5px solid var(--sep)}
+.form-row .lbl{flex:1}
+.stepper{display:flex;background:var(--fill);border-radius:8px;overflow:hidden;flex:none}
+.stepper button{width:44px;height:32px;font-size:20px;font-weight:400;line-height:1;
+  display:grid;place-items:center;transition:background .15s}
+.stepper button:active{background:rgba(120,120,128,.3)}
+.stepper button[disabled]{opacity:.3}
+.stepper .sep{width:.5px;background:var(--sep)}
+.sw{width:51px;height:31px;border-radius:99px;background:var(--fill);position:relative;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}
+.sw.on{background:var(--green)} .sw.on::after{transform:translateX(20px)}
+.start{width:100%;padding:13px;background:var(--blue);color:#fff;font-size:17px;font-weight:600;
+  border-radius:10px;transition:transform .12s}
+.start:active{transform:scale(.98)}
+
+/* Quiz */
+.quiz{padding:16px 24px 24px;gap:20px}
+.quiz-head{display:flex;align-items:baseline;gap:12px}
+.quiz-head .q{font-size:15px;color:var(--text2)}
+.quiz-head .fill{flex:1}
+.quiz-head .sc{font-size:15px;font-weight:600;color:var(--blue)}
+.bar{height:5px;border-radius:3px;background:var(--fill);overflow:hidden}
+.bar > i{display:block;height:100%;background:var(--blue);border-radius:3px;transition:width .3s ease-in-out}
+.chrono{text-align:center;font-size:22px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums}
+.chrono.low{color:var(--red)}
+.timeout{text-align:center;font-size:17px;font-weight:600;color:var(--red)}
+.prompt{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.prompt .num{font-size:72px;font-weight:700;line-height:1.05;letter-spacing:-1px}
+.prompt .word{font-size:44px;font-weight:700;line-height:1.1}
+.prompt .word-row{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.prompt .hint{font-size:15px;color:var(--text2)}
+.speaker{color:var(--blue);font-size:24px;line-height:1;padding:4px;transition:transform .12s}
+.speaker:active{transform:scale(.9)}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{padding:14px 8px;font-size:20px;font-weight:700;border-radius:12px;
+  background:var(--tint);color:var(--blue);transition:background .25s,color .25s,transform .12s}
+.choice:active{transform:scale(.98)}
+.choice.right{background:var(--green);color:#fff}
+.choice.wrong{background:var(--red);color:#fff}
+.choice.off{background:rgba(142,142,147,.12);color:var(--gray)}
+.after{display:flex;align-items:center;justify-content:center;gap:24px;animation:fade .3s}
+.listen{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:15px;font-weight:600}
+.next{display:flex;align-items:center;gap:6px;color:#fff;font-size:15px;font-weight:600;
+  background:linear-gradient(160deg,#2b90ff,#0062d6);padding:10px 20px;border-radius:99px;
+  transition:transform .12s}
+.next:active{transform:scale(.96)}
+
+/* Résultat */
+.result{align-items:center;text-align:center;padding:0 24px 24px;gap:24px}
+.result .emoji{font-size:80px;line-height:1}
+.result h2{font-size:34px;font-weight:700;margin:0}
+.result .score{font-size:48px;font-weight:700;color:var(--blue)}
+.result .sub{font-size:20px;color:var(--text2)}
+.result .replay{width:100%;padding:16px;border-radius:12px;color:#fff;font-size:20px;font-weight:700;
+  background:linear-gradient(160deg,#2b90ff,#0062d6);transition:transform .12s}
+.result .replay:active{transform:scale(.98)}
+.result .menu{color:var(--blue);font-size:17px;padding:4px}
+
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   Données
+   ========================================================= */
+const BASIC = [
+  [0,"nought","zéro"], [1,"one","un"], [2,"two","deux"], [3,"three","trois"],
+  [4,"four","quatre"], [5,"five","cinq"], [6,"six","six"], [7,"seven","sept"],
+  [8,"eight","huit"], [9,"nine","neuf"], [10,"ten","dix"], [11,"eleven","onze"],
+  [12,"twelve","douze"], [13,"thirteen","treize"], [14,"fourteen","quatorze"],
+  [15,"fifteen","quinze"], [16,"sixteen","seize"], [17,"seventeen","dix-sept"],
+  [18,"eighteen","dix-huit"], [19,"nineteen","dix-neuf"], [20,"twenty","vingt"]
+].map(([number, english, french]) => ({ number, english, french }));
+
+/* « forty » et non « fourty » : seule dizaine anglaise qui perd le u de four. */
+const EXTRAS = [
+  [30,"thirty","trente"], [40,"forty","quarante"], [50,"fifty","cinquante"],
+  [60,"sixty","soixante"], [70,"seventy","soixante-dix"], [80,"eighty","quatre-vingts"],
+  [90,"ninety","quatre-vingt-dix"], [100,"one hundred","cent"],
+  [1000,"one thousand","mille"], [100000,"one hundred thousand","cent mille"],
+  [1000000000,"one billion","un milliard"]
+].map(([number, english, french]) => ({ number, english, french }));
+
+const ADVANCED = BASIC.concat(EXTRAS);
+
+// Séparateur de milliers : espace, comme le NumberFormatter d'origine
+const displayNumber = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+const MODES = {
+  numberToEnglish: "Chiffre → Anglais",
+  englishToFrench: "Anglais → Français"
+};
+
+/* =========================================================
+   État
+   ========================================================= */
+const vm = {
+  screen: "home",              // home | settings | quiz | result
+  mode: "numberToEnglish",
+  pool: BASIC,
+  levelTitle: "Débutant",
+
+  // QuizConfig
+  questionCount: 10,
+  choiceCount: 4,
+  timerEnabled: false,
+  timerDuration: 10,
+
+  // Partie
+  questions: [],
+  currentIndex: 0,
+  score: 0,
+  selectedAnswer: null,
+  timedOut: false,
+  timeRemaining: 0
+};
+
+let ticker = null;
+const hasAnswered = () => vm.selectedAnswer !== null || vm.timedOut;
+
+/* =========================================================
+   Utilitaires
+   ========================================================= */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const shuffle = a => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+/* ---------- Synthèse vocale anglaise (en-GB) ---------- */
+let enVoice = null;
+function pickVoice() {
+  const v = speechSynthesis.getVoices();
+  enVoice = v.find(x => x.lang === "en-GB") || v.find(x => x.lang.startsWith("en")) || null;
+}
+if ("speechSynthesis" in window) {
+  pickVoice();
+  speechSynthesis.addEventListener("voiceschanged", pickVoice);
+}
+function speakEnglish(text) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-GB";
+  if (enVoice) u.voice = enVoice;
+  u.rate = 0.8;   // AVSpeechUtterance rate 0.4, soit un peu sous la vitesse normale
+  speechSynthesis.speak(u);
+}
+
+/* =========================================================
+   Génération des questions
+   ========================================================= */
+function generateQuestions(pool, count, choiceCount) {
+  const n  = Math.min(count, pool.length);
+  const nc = Math.min(choiceCount, pool.length);
+  return shuffle(pool.slice()).slice(0, n).map(correct => {
+    const wrong = shuffle(pool.filter(e => e.number !== correct.number)).slice(0, nc - 1);
+    return { entry: correct, choices: shuffle(wrong.concat([correct])) };
+  });
+}
+
+function resetQuiz() {
+  stopTimer();
+  vm.questions = generateQuestions(vm.pool, vm.questionCount, vm.choiceCount);
+  vm.currentIndex = 0;
+  vm.score = 0;
+  vm.selectedAnswer = null;
+  vm.timedOut = false;
+  vm.screen = "quiz";
+  startQuestionTimer();
+  render();
+}
+
+function answerTapped(entry) {
+  if (hasAnswered()) return;
+  stopTimer();
+  vm.selectedAnswer = entry;
+  if (entry.number === vm.questions[vm.currentIndex].entry.number) vm.score++;
+  render();
+}
+
+function goToNext() {
+  stopTimer();
+  if (vm.currentIndex + 1 < vm.questions.length) {
+    vm.currentIndex++;
+    vm.selectedAnswer = null;
+    vm.timedOut = false;
+    startQuestionTimer();
+  } else {
+    vm.screen = "result";
+  }
+  render();
+}
+
+function startQuestionTimer() {
+  stopTimer();
+  if (!vm.timerEnabled) return;
+  vm.timeRemaining = vm.timerDuration;
+  ticker = setInterval(() => {
+    if (hasAnswered()) return stopTimer();
+    vm.timeRemaining--;
+    if (vm.timeRemaining > 0) updateChrono();
+    else { stopTimer(); vm.timedOut = true; render(); }
+  }, 1000);
+}
+function stopTimer() { clearInterval(ticker); ticker = null; }
+
+function updateChrono() {
+  const el = $("#chrono");
+  if (!el) return;
+  el.textContent = vm.timeRemaining + "s";
+  el.classList.toggle("low", vm.timeRemaining <= 3);
+}
+
+/* =========================================================
+   Vues
+   ========================================================= */
+const chevL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4 7 12l8 8"/></svg>`;
+const SPEAKER = "🔊";
+
+function navbar(title, backTo) {
+  return `<div class="navbar">
+    <button class="back" data-go="${backTo}">${chevL}<span>Retour</span></button>
+    <div class="title">${esc(title)}</div>
+  </div>`;
+}
+
+function viewHome() {
+  return `<div class="screen home">
+    <div class="spacer"></div>
+    <div class="flag">🇬🇧</div>
+    <h1>English Numbers</h1>
+    <div class="tag">Apprends les nombres en anglais !</div>
+    <div class="spacer"></div>
+    <div class="segmented">
+      ${Object.entries(MODES).map(([k, v]) =>
+        `<button class="${vm.mode === k ? "on" : ""}" data-mode="${k}">${v}</button>`).join("")}
+    </div>
+    <button class="level beginner" data-level="basic">
+      <span><b>Débutant</b><span>0 → 20</span></span>
+      <span class="fill"></span><span class="chev">›</span>
+    </button>
+    <button class="level brave" data-level="advanced">
+      <span><b>Courageux</b><span>0 → 1 000 000 000</span></span>
+      <span class="fill"></span><span class="chev">›</span>
+    </button>
+    <div class="spacer"></div>
+    <div class="credit">Application créée par Caribou Labs</div>
+  </div>`;
+}
+
+function stepper(key, min, max, label) {
+  const v = vm[key];
+  return `<div class="form-row">
+    <span class="lbl">${label}</span>
+    <span class="stepper">
+      <button data-step="${key}" data-delta="-1" ${v <= min ? "disabled" : ""} aria-label="Diminuer">−</button>
+      <span class="sep"></span>
+      <button data-step="${key}" data-delta="1" ${v >= max ? "disabled" : ""} aria-label="Augmenter">+</button>
+    </span>
+  </div>`;
+}
+
+function viewSettings() {
+  const maxQ = vm.pool.length;
+  const maxC = Math.min(6, vm.pool.length);
+  return `<div class="screen">
+    ${navbar("Paramètres", "home")}
+    <div class="scroll"><div class="form">
+      <div class="form-section">
+        <div class="form-label">Questions</div>
+        <div class="form-card">${stepper("questionCount", 1, maxQ, `Nombre : ${vm.questionCount}`)}</div>
+      </div>
+      <div class="form-section">
+        <div class="form-label">Réponses proposées</div>
+        <div class="form-card">${stepper("choiceCount", 2, maxC, `Choix : ${vm.choiceCount}`)}</div>
+      </div>
+      <div class="form-section">
+        <div class="form-label">Chronomètre</div>
+        <div class="form-card">
+          <button class="form-row" data-toggle="timerEnabled" style="width:100%;text-align:left">
+            <span class="lbl">Activer le chrono</span>
+            <span class="sw ${vm.timerEnabled ? "on" : ""}"></span>
+          </button>
+          ${vm.timerEnabled ? stepper("timerDuration", 3, 60, `${vm.timerDuration} secondes`) : ""}
+        </div>
+      </div>
+      <button class="start" data-act="start">Commencer !</button>
+    </div></div>
+  </div>`;
+}
+
+function viewQuiz() {
+  const q = vm.questions[vm.currentIndex];
+  if (!q) return `<div class="screen"></div>`;
+  const done = hasAnswered();
+
+  const prompt = vm.mode === "numberToEnglish"
+    ? `<div class="num rounded">${displayNumber(q.entry.number)}</div>
+       <div class="hint">Comment dit-on ce nombre en anglais ?</div>`
+    : `<div class="word-row">
+         <span class="word rounded">${esc(q.entry.english)}</span>
+         <button class="speaker" data-say="${esc(q.entry.english)}" aria-label="Écouter">${SPEAKER}</button>
+       </div>
+       <div class="hint">Quelle est la traduction en français ?</div>`;
+
+  return `<div class="screen quiz">
+    ${navbar(vm.levelTitle, "settings").replace('class="navbar"', 'class="navbar" style="margin:-16px -24px 0"')}
+    <div class="quiz-head">
+      <span class="q">Question ${vm.currentIndex + 1}/${vm.questions.length}</span>
+      <span class="fill"></span>
+      <span class="sc">Score : ${vm.score}</span>
+    </div>
+    <div class="bar"><i style="width:${vm.currentIndex / vm.questions.length * 100}%"></i></div>
+    ${vm.timerEnabled && !done
+      ? `<div class="chrono ${vm.timeRemaining <= 3 ? "low" : ""}" id="chrono">${vm.timeRemaining}s</div>` : ""}
+    ${vm.timedOut ? `<div class="timeout">Temps écoulé !</div>` : ""}
+
+    <div class="spacer"></div>
+    <div class="prompt">${prompt}</div>
+    <div class="spacer"></div>
+
+    <div class="choices">
+      ${q.choices.map((c, i) => {
+        let cls = "";
+        if (done) {
+          if (c.number === q.entry.number) cls = "right";
+          else if (vm.selectedAnswer && c.number === vm.selectedAnswer.number) cls = "wrong";
+          else cls = "off";
+        }
+        const label = vm.mode === "numberToEnglish" ? c.english : c.french;
+        return `<button class="choice ${cls}" data-answer="${c.number}" ${done ? "disabled" : ""}
+                  aria-keyshortcuts="${i + 1}">${esc(label)}</button>`;
+      }).join("")}
+    </div>
+
+    ${done ? `<div class="after">
+      <button class="listen" data-say="${esc(q.entry.english)}">${SPEAKER} Écouter</button>
+      <button class="next" data-act="next">Suivant →</button>
+    </div>` : ""}
+    <div class="spacer"></div>
+  </div>`;
+}
+
+function viewResult() {
+  const pct = vm.score / vm.questions.length * 100;
+  const [emoji, message] =
+    pct >= 90 ? ["🏆", "Excellent !"] :
+    pct >= 70 ? ["👏", "Très bien !"] :
+    pct >= 50 ? ["💪", "Pas mal !"] :
+                ["📚", "Continue à t'entraîner !"];
+  return `<div class="screen result">
+    <div class="spacer"></div>
+    <div class="emoji">${emoji}</div>
+    <h2>${message}</h2>
+    <div class="score rounded">${vm.score} / ${vm.questions.length}</div>
+    <div class="sub">bonnes réponses</div>
+    <div class="spacer"></div>
+    <button class="replay" data-act="replay">Rejouer</button>
+    <button class="menu" data-go="home">Menu principal</button>
+  </div>`;
+}
+
+function render() {
+  const views = { home: viewHome, settings: viewSettings, quiz: viewQuiz, result: viewResult };
+  $("#app").innerHTML = views[vm.screen]();
+}
+
+/* =========================================================
+   Événements
+   ========================================================= */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-mode],[data-level],[data-step],[data-toggle],[data-answer],[data-say],[data-act]");
+  if (!t) return;
+
+  if (t.dataset.go)   { stopTimer(); vm.screen = t.dataset.go; render(); return; }
+  if (t.dataset.mode) { vm.mode = t.dataset.mode; render(); return; }
+
+  if (t.dataset.level) {
+    const basic = t.dataset.level === "basic";
+    vm.pool = basic ? BASIC : ADVANCED;
+    vm.levelTitle = basic ? "Débutant" : "Courageux";
+    vm.questionCount = clamp(vm.questionCount, 1, vm.pool.length);
+    vm.choiceCount   = clamp(vm.choiceCount, 2, Math.min(6, vm.pool.length));
+    vm.screen = "settings"; render(); return;
+  }
+
+  if (t.dataset.step) {
+    const key = t.dataset.step, d = +t.dataset.delta;
+    const bounds = {
+      questionCount: [1, vm.pool.length],
+      choiceCount:   [2, Math.min(6, vm.pool.length)],
+      timerDuration: [3, 60]
+    }[key];
+    vm[key] = clamp(vm[key] + d, bounds[0], bounds[1]);
+    render(); return;
+  }
+
+  if (t.dataset.toggle) { vm[t.dataset.toggle] = !vm[t.dataset.toggle]; render(); return; }
+  if (t.dataset.say)    { speakEnglish(t.dataset.say); return; }
+
+  if (t.dataset.answer) {
+    const entry = vm.questions[vm.currentIndex].choices.find(c => c.number === +t.dataset.answer);
+    if (entry) answerTapped(entry);
+    return;
+  }
+
+  switch (t.dataset.act) {
+    case "start":  resetQuiz(); break;
+    case "next":   goToNext(); break;
+    case "replay": resetQuiz(); break;
+  }
+});
+
+/* Clavier : 1-6 pour répondre, Entrée pour la suite, L pour écouter */
+document.addEventListener("keydown", e => {
+  if (vm.screen !== "quiz") return;
+  if (/^[1-6]$/.test(e.key)) {
+    const b = $$(".choice")[+e.key - 1];
+    if (b && !b.disabled) b.click();
+  } else if (e.key === "Enter" || e.key === " ") {
+    const n = $('[data-act="next"]');
+    if (n) { e.preventDefault(); n.click(); }
+  } else if (e.key.toLowerCase() === "l") {
+    const l = $(".listen");
+    if (l) l.click();
+  }
+});
+
+/* =========================================================
+   Démarrage PWA
+   ========================================================= */
+const startScreen = new URLSearchParams(location.search).get("niveau");
+if (startScreen === "debutant" || startScreen === "courageux") {
+  const basic = startScreen === "debutant";
+  vm.pool = basic ? BASIC : ADVANCED;
+  vm.levelTitle = basic ? "Débutant" : "Courageux";
+  vm.screen = "settings";
+}
+
+/* Service worker : hors-ligne (HTTPS ou localhost uniquement) */
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => console.warn("SW:", err));
+  });
+}
+
+render();
+</script>
+</body>
+</html>
