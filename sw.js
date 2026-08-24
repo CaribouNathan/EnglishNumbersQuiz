@@ -1,9 +1,9 @@
-/* Tables de multiplication — service worker
+/* English Numbers — service worker
    Stratégie : precache complet à l'installation, puis cache-first.
    L'app tient en 5 fichiers, il n'y a donc rien à charger au lancement. */
 
 const VERSION = "v2";
-const CACHE = `tables-${VERSION}`;
+const CACHE = `english-numbers-${VERSION}`;
 
 const SHELL = [
   "./",
